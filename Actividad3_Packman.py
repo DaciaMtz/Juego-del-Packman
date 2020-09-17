@@ -97,52 +97,57 @@ def world():
 #Funcion que hace que se mueva el personaje principal (Pacman) y genera los movimientos de los bots (fantasmas)
 def move():
     "Move pacman and all ghosts."
-    writer.undo()
-    writer.write(state['score'])
 
-    clear()
+    #Ciclo for que hace que los fantasmas avancen 2 posiciones por cada 1 que avanza Pacman;
+    #si en lugar de range (2) se pone range (3), los fantasmas avanzarán 3 veces más rápido que Pacman y así sucesivamente
+    for i in range (2): 
+        writer.undo()
+        writer.write(state['score'])
 
-    if valid(pacman + aim):
-        pacman.move(aim)
+        clear()
 
-    index = offset(pacman)
+        if i == 0: #Solo la primera vez que se ejecuta el ciclo for Pacman cambia de posición
+            if valid(pacman + aim):
+                pacman.move(aim)
 
-    if tiles[index] == 1:
-        tiles[index] = 2
-        state['score'] += 1
-        x = (index % 20) * 20 - 200
-        y = 180 - (index // 20) * 20
-        square(x, y)
+            index = offset(pacman)
 
-    up()
-    goto(pacman.x + 10, pacman.y + 10)
-    dot(20, 'yellow')
-
-    for point, course in ghosts:
-        if valid(point + course):
-            point.move(course)
-        else:
-            options = [
-                vector(5, 0),
-                vector(-5, 0),
-                vector(0, 5),
-                vector(0, -5),
-            ]
-            plan = choice(options)
-            course.x = plan.x
-            course.y = plan.y
+            if tiles[index] == 1:
+                tiles[index] = 2
+                state['score'] += 1
+                x = (index % 20) * 20 - 200
+                y = 180 - (index // 20) * 20
+                square(x, y)
 
         up()
-        goto(point.x + 10, point.y + 10)
-        dot(20, 'red')
+        goto(pacman.x + 10, pacman.y + 10)
+        dot(20, 'yellow')
 
-    update()
+        for point, course in ghosts:
+            if valid(point + course):
+                point.move(course)
+            else:
+                options = [
+                    vector(5, 0),
+                    vector(-5, 0),
+                    vector(0, 5),
+                    vector(0, -5),
+                ]
+                plan = choice(options)
+                course.x = plan.x
+                course.y = plan.y
 
-    for point, course in ghosts:
-        if abs(pacman - point) < 20:
-            return
+            up()
+            goto(point.x + 10, point.y + 10)
+            dot(20, 'red')
 
-    ontimer(move, 100)
+        update()
+
+        for point, course in ghosts:
+            if abs(pacman - point) < 20: #Si Pacman choca con un fantasme el juego se detiene.
+                return
+
+    ontimer(move, 100) #La función move se repite cada 0.1 s
 
 #Esta funcion verifica que el pacman pueda cambiar de dirección en su posición actual del mapa
 def change(x, y):
