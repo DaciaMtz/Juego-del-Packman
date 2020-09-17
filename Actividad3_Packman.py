@@ -2,6 +2,7 @@ from random import choice
 from turtle import *
 from freegames import floor, vector
 
+#En esta sección se Inicializa el marcador y vectores de Fantasmas y Pacman
 state = {'score': 0}
 path = Turtle(visible=False)
 writer = Turtle(visible=False)
@@ -13,6 +14,7 @@ ghosts = [
     [vector(100, 160), vector(0, -5)],
     [vector(100, -160), vector(-5, 0)],
 ]
+#Lista que representa el mapa, 0= pared, 1=camino
 tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
@@ -36,6 +38,7 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
+#Funcion que dibuja cuadrados, usada para diseñar el mapa con ciertas coordenadas
 def square(x, y):
     "Draw square using path at (x, y)."
     path.up()
@@ -49,6 +52,7 @@ def square(x, y):
 
     path.end_fill()
 
+#Funcion que regresa el desplazamiento del punto en el mapa
 def offset(point):
     "Return offset of point in tiles."
     x = (floor(point.x, 20) + 200) / 20
@@ -56,6 +60,7 @@ def offset(point):
     index = int(x + y * 20)
     return index
 
+#Esta función es fundamental para que el juego funcione ya que verifica que todas las posiciones sean validas
 def valid(point):
     "Return True if point is valid in tiles."
     index = offset(point)
@@ -70,6 +75,7 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
+#Funcion que define el mundo haciendo uso de la lista de tiles de antes, colorea el mapa y hace uso de path para los caminos
 def world():
     "Draw world using path."
     bgcolor('black')
@@ -88,6 +94,7 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
+#Funcion que hace que se mueva el personaje principal (Pacman) y genera los movimientos de los bots (fantasmas)
 def move():
     "Move pacman and all ghosts."
     writer.undo()
@@ -137,23 +144,33 @@ def move():
 
     ontimer(move, 100)
 
+#Esta funcion verifica que el pacman pueda cambiar de dirección en su posición actual del mapa
 def change(x, y):
     "Change pacman aim if valid."
     if valid(pacman + vector(x, y)):
+        #Mueve en direccion X
         aim.x = x
+        #Mueve en direccion Y
         aim.y = y
 
+#Da el tamaño de la ventana del usuario, entre otros.
 setup(420, 420, 370, 0)
 hideturtle()
 tracer(False)
+
+#Inicializa el marcador con su posición y color
 writer.goto(160, 160)
 writer.color('white')
 writer.write(state['score'])
 listen()
+
+#Asigna los movimientos del pacman
 onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
+
+#Se inicializa el juego y el aim
 world()
 move()
 done()
