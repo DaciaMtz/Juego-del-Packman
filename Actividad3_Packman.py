@@ -1,3 +1,12 @@
+#TC001S.1 Actividad 3. Juego del Packman
+"""Versión sencilla del conocido videojuego arcade de Pac-Man con 3 actualizaciones:
+    * Cambio del tablero
+    * Fastasmas más rápidos
+    * Fantasmas más inteligentes"""
+
+#Dacia Martínez Díaz A01733799
+#Fernando Aguilar Acosta A00827677
+
 from random import choice, shuffle
 from turtle import *
 from freegames import floor, vector
