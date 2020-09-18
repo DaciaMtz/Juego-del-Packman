@@ -128,33 +128,35 @@ def move():
         for point, course in ghosts: #Ciclo for que se repite para cada fantasma
             if valid(point + course):
                 point.move(course)
-            else: #Cuando choca evalúa las opciones de movimiento almacenadas en options
+            else: #Cuando choca con un obstáculo del camino evalúa las opciones de movimiento almacenadas en options
                 options = [
                     vector(5, 0),
                     vector(-5, 0),
                     vector(0, 5),
                     vector(0, -5),
                 ]
-                planpriority = [0,1,2,3] #Lista que sirve para almecenar el orden de prioridad de movimientos de los fantasmas
-                #Listas que definen aleatoriamente si se le da prioridad al movimiento en el eje x o en el eje y:
-                prioridadxy1 = [0,1] 
-                prioridadxy2 = [2,3]
-                shuffle(prioridadxy1) 
-                shuffle(prioridadxy2)
+                
                 difposition = point - pacman #Vector que indica la posición relativa del fantasma respecto a Pacman
+                planpriority = [0,1,2,3] #Lista que sirve para almecenar el orden de prioridad de movimientos de los fantasmas
+                
+                #Lista que definen si se le da prioridad al movimiento en el eje x o en el eje y:
+                if abs(difposition.x) > abs(difposition.y): 
+                    prioridadxy = [0,1,3,2]
+                else:
+                    prioridadxy = [1,0,2,3]
                 
                 if difposition.x < 0: #Si el fantasma está a la izquierda de Pacman se le da prioridad al giro hacia la derecha
-                    planpriority[prioridadxy1[0]] = 0 
-                    planpriority[prioridadxy2[0]] = 1 
+                    planpriority[prioridadxy[0]] = 0 
+                    planpriority[prioridadxy[2]] = 1 
                 else: #Si el fantasma está a la izquierda de Pacman se le da prioridad al giro hacia la izquierda
-                    planpriority[prioridadxy1[0]] = 1 
-                    planpriority[prioridadxy2[0]] = 0 
+                    planpriority[prioridadxy[0]] = 1 
+                    planpriority[prioridadxy[2]] = 0 
                 if difposition.y < 0: #Si el fantasma está abajo de Pacman se le da prioridad al giro hacia arriba
-                    planpriority[prioridadxy1[1]] = 2 
-                    planpriority[prioridadxy2[1]] = 3 
+                    planpriority[prioridadxy[1]] = 2 
+                    planpriority[prioridadxy[3]] = 3 
                 else: #Si el fantasma está arriba de Pacman se le da prioridad al giro hacia abajo
-                    planpriority[prioridadxy1[1]] = 3
-                    planpriority[prioridadxy2[1]] = 2 
+                    planpriority[prioridadxy[1]] = 3
+                    planpriority[prioridadxy[3]] = 2 
                     
                 plan = options[planpriority[0]] #El plan de movimiento será la opción correspondiente al primer elemento de la lista planpriority
                 courseprovisional = course
