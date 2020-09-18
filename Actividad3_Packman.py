@@ -2,7 +2,7 @@ from random import choice
 from turtle import *
 from freegames import floor, vector
 
-#En esta sección se Inicializa el marcador y vectores de Fantasmas y Pacman
+#En esta sección se Inicializa el marcador, camino y vectores de Fantasmas y Pacman
 state = {'score': 0}
 path = Turtle(visible=False)
 writer = Turtle(visible=False)
@@ -38,15 +38,15 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
-#Funcion que dibuja cuadrados, usada para diseñar el mapa con ciertas coordenadas
+#Funcion que dibuja los cuadrados o mosaicos del camino, usada para diseñar el mapa a partir de ciertas coordenadas
 def square(x, y):
     "Draw square using path at (x, y)."
     path.up()
     path.goto(x, y)
     path.down()
-    path.begin_fill()
+    path.begin_fill() 
 
-    for count in range(4):
+    for count in range(4): #Cada iteración del ciclo for dibuja una línea del cuadrado
         path.forward(20)
         path.left(90)
 
@@ -75,24 +75,24 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
-#Funcion que define el mundo haciendo uso de la lista de tiles de antes, colorea el mapa y hace uso de path para los caminos
+#Funcion que dibuja el mundo (tablero) haciendo uso de la lista de tiles de antes, colorea el mapa y hace uso de path para los caminos
 def world():
     "Draw world using path."
-    bgcolor('black')
-    path.color('blue')
+    bgcolor('black') #Colorea de negro todo el fondo de la venta 
+    path.color('blue') #Define el camino de color azul
 
-    for index in range(len(tiles)):
-        tile = tiles[index]
+    for index in range(len(tiles)): #Ciclo for que recorre cada cuadrito o mosaico previamente definido en la lista tiles
+        tile = tiles[index] 
 
-        if tile > 0:
-            x = (index % 20) * 20 - 200
+        if tile == 1: #Los mosaicos definidos con 1 en la lista tiles se colorean como camino
+            #A partir del índice del mosaico definimos x, y
+            x = (index % 20) * 20 - 200  
             y = 180 - (index // 20) * 20
-            square(x, y)
-
-            if tile == 1:
-                path.up()
-                path.goto(x + 10, y + 10)
-                path.dot(2, 'white')
+            square(x, y) #Se llama a la función square para dibujar y pintar el mosaico de color azul
+            #Se mueve path al centro del mosaico para dibujar el punto blanco que representa la comida
+            path.up() 
+            path.goto(x + 10, y + 10) 
+            path.dot(2, 'white') 
 
 #Funcion que hace que se mueva el personaje principal (Pacman) y genera los movimientos de los bots (fantasmas)
 def move():
@@ -101,10 +101,10 @@ def move():
     #Ciclo for que hace que los fantasmas avancen 2 posiciones por cada 1 que avanza Pacman;
     #si en lugar de range (2) se pone range (3), los fantasmas avanzarán 3 veces más rápido que Pacman y así sucesivamente
     for i in range (2): 
-        writer.undo()
-        writer.write(state['score'])
+        writer.undo() #Se borra el marcador
+        writer.write(state['score']) #Se vuelve a dibujar el marcador con el score actualizado
 
-        clear()
+        clear() #Se borran los dibujos anteriores de los personajes
 
         if i == 0: #Solo la primera vez que se ejecuta el ciclo for Pacman cambia de posición
             if valid(pacman + aim):
@@ -112,18 +112,18 @@ def move():
 
             index = offset(pacman)
 
-            if tiles[index] == 1:
-                tiles[index] = 2
-                state['score'] += 1
-                x = (index % 20) * 20 - 200
+            if tiles[index] == 1: #Si hay comida en la posición de pacman:
+                tiles[index] = 2 #Se le asigna al mosaico el valor 2
+                state['score'] += 1 #Aumenta 1 punto el marcador
+                x = (index % 20) * 20 - 200 
                 y = 180 - (index // 20) * 20
-                square(x, y)
+                square(x, y) #Se llama a la función square para que coloree el mosaico de azul y ya no aparezca el punto de la comida
 
         up()
         goto(pacman.x + 10, pacman.y + 10)
-        dot(20, 'yellow')
+        dot(20, 'yellow') #Dibuja a pacman como un punto amarillo en su pocición establecida
 
-        for point, course in ghosts:
+        for point, course in ghosts: 
             if valid(point + course):
                 point.move(course)
             else:
@@ -144,10 +144,10 @@ def move():
         update()
 
         for point, course in ghosts:
-            if abs(pacman - point) < 20: #Si Pacman choca con un fantasme el juego se detiene.
+            if abs(pacman - point) < 20: #Si Pacman choca con un fantasma el juego se detiene.
                 return
 
-    ontimer(move, 100) #La función move se repite cada 0.1 s
+    ontimer(move, 100) #La función move se repite cada 0.1 segundos
 
 #Esta funcion verifica que el pacman pueda cambiar de dirección en su posición actual del mapa
 def change(x, y):
@@ -169,7 +169,7 @@ writer.color('white')
 writer.write(state['score'])
 listen()
 
-#Asigna los movimientos del pacman
+#Asigna los comandos de movimiento del pacman 
 onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
