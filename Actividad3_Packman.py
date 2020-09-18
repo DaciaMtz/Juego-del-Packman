@@ -130,10 +130,11 @@ def move():
                 point.move(course)
             else: #Cuando choca evalúa las opciones de movimiento almacenadas en options
                 options = [
-                    vector(5, 0),
-                    vector(-5, 0),
-                    vector(0, 5),
-                    vector(0, -5),
+                    #Estos numeros de los vectores ayuda a aumentar aún más la velocidad de los fantasmas
+                    vector(8, 0),
+                    vector(-8, 0),
+                    vector(0, 8),
+                    vector(0, -8),
                 ]
                 planpriority = [0,1,2,3] #Lista que sirve para almecenar el orden de prioridad de movimientos de los fantasmas
                 #Listas que definen aleatoriamente si se le da prioridad al movimiento en el eje x o en el eje y:
