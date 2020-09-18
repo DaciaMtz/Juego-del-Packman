@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, shuffle
 from turtle import *
 from freegames import floor, vector
 
@@ -105,7 +105,8 @@ def move():
         writer.write(state['score']) #Se vuelve a dibujar el marcador con el score actualizado
 
         clear() #Se borran los dibujos anteriores de los personajes
-
+        
+        #MOVIMIENTO DE PACMAN
         if i == 0: #Solo la primera vez que se ejecuta el ciclo for Pacman cambia de posición
             if valid(pacman + aim):
                 pacman.move(aim)
@@ -122,24 +123,62 @@ def move():
         up()
         goto(pacman.x + 10, pacman.y + 10)
         dot(20, 'yellow') #Dibuja a pacman como un punto amarillo en su pocición establecida
-
-        for point, course in ghosts: 
+        
+        #MOVIMIENTO DE LOS FANTASMAS
+        for point, course in ghosts: #Ciclo for que se repite para cada fantasma
             if valid(point + course):
                 point.move(course)
-            else:
+            else: #Cuando choca evalúa las opciones de movimiento almacenadas en options
                 options = [
                     vector(5, 0),
                     vector(-5, 0),
                     vector(0, 5),
                     vector(0, -5),
                 ]
-                plan = choice(options)
+                planpriority = [0,1,2,3] #Lista que sirve para almecenar el orden de prioridad de movimientos de los fantasmas
+                #Listas que definen aleatoriamente si se le da prioridad al movimiento en el eje x o en el eje y:
+                prioridadxy1 = [0,1] 
+                prioridadxy2 = [2,3]
+                shuffle(prioridadxy1) 
+                shuffle(prioridadxy2)
+                difposition = point - pacman #Vector que indica la posición relativa del fantasma respecto a Pacman
+                
+                if difposition.x < 0: #Si el fantasma está a la izquierda de Pacman se le da prioridad al giro hacia la derecha
+                    planpriority[prioridadxy1[0]] = 0 
+                    planpriority[prioridadxy2[0]] = 1 
+                else: #Si el fantasma está a la izquierda de Pacman se le da prioridad al giro hacia la izquierda
+                    planpriority[prioridadxy1[0]] = 1 
+                    planpriority[prioridadxy2[0]] = 0 
+                if difposition.y < 0: #Si el fantasma está abajo de Pacman se le da prioridad al giro hacia arriba
+                    planpriority[prioridadxy1[1]] = 2 
+                    planpriority[prioridadxy2[1]] = 3 
+                else: #Si el fantasma está arriba de Pacman se le da prioridad al giro hacia abajo
+                    planpriority[prioridadxy1[1]] = 3
+                    planpriority[prioridadxy2[1]] = 2 
+                    
+                plan = options[planpriority[0]] #El plan de movimiento será la opción correspondiente al primer elemento de la lista planpriority
+                courseprovisional = course
+                courseprovisional.x = plan.x
+                courseprovisional.y = plan.y
+                if valid(point + courseprovisional) == False: #Si ese movimiento no es válido se intenta con la segunda opción:
+                    plan = options[planpriority[1]]
+                    courseprovisional = course
+                    courseprovisional.x = plan.x
+                    courseprovisional.y = plan.y
+                    if valid(point + courseprovisional) == False: #Si ese movimiento no es válido se intenta con la tercera opción:
+                        plan = options[planpriority[2]]
+                        courseprovisional = course
+                        courseprovisional.x = plan.x
+                        courseprovisional.y = plan.y
+                        if valid(point + courseprovisional) == False: #Si ese movimiento no es válido se ejecuta la última opción:
+                            plan = options[planpriority[3]]
+                
                 course.x = plan.x
                 course.y = plan.y
 
             up()
             goto(point.x + 10, point.y + 10)
-            dot(20, 'red')
+            dot(20, 'red') #Dibuja al fantasma como un punto rojo en su pocición establecida
 
         update()
 
